@@ -1,7 +1,6 @@
 package com.example.spacelogin.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,8 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.spacelogin.R
-import com.example.spacelogin.ui.theme.backgroundColor
-import com.example.spacelogin.ui.theme.buttonColor
+import androidx.compose.ui.platform.LocalContext
 
 
 @Composable
@@ -47,6 +44,9 @@ fun LoginPage(navController: NavHostController) {
     val passwordValue = remember { mutableStateOf("") }
     val passwordVisibility = remember { mutableStateOf(false) }
     val rememberMe = remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    var isUsernameFocused = remember { mutableStateOf(false) }
+    var isPasswordFocused = remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -60,25 +60,27 @@ fun LoginPage(navController: NavHostController) {
                 .padding(top = 70.dp, start = 20.dp, end = 20.dp)
         ) {
             Text(
-                text = "Sign In",
+                text = context.getString(R.string.sign_in),
                 style = TextStyle(fontWeight = FontWeight.Bold, letterSpacing = 2.sp),
                 fontSize = 30.sp
 
             )
             Spacer(modifier = Modifier.padding(20.dp))
             Column(horizontalAlignment = Alignment.Start) {
-                Text("Username", modifier = Modifier.padding(bottom = 8.dp))
+                Text(context.getString(R.string.username), modifier = Modifier.padding(bottom = 8.dp))
+
                 OutlinedTextField(
                     value = nameValue.value,
                     onValueChange = { newValue -> nameValue.value = newValue },
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(width = 1.dp, color = Color.Gray),
+                        .background(color = if (isUsernameFocused.value) Color.Gray else Color.White ),
+                        //.border(width = 1.dp, color = if (isUsernameFocused.value) Color.Blue else Color.Gray),
                     shape = RectangleShape,
-                    placeholder = { Text(text = "Your Username") }
+                    placeholder = { Text(text = context.getString(R.string.your_username)) }
                 )
-                Text("Password", modifier = Modifier.padding(bottom = 8.dp))
+                Text(context.getString(R.string.password), modifier = Modifier.padding(bottom = 8.dp))
                 OutlinedTextField(
                     value = passwordValue.value,
                     onValueChange = { newValue -> passwordValue.value = newValue },
@@ -96,9 +98,10 @@ fun LoginPage(navController: NavHostController) {
                     singleLine = true,
                     visualTransformation = if (passwordVisibility.value) VisualTransformation.None
                     else PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
+                        .background(color = if (isPasswordFocused.value) Color.Gray else Color.White ),
                     shape = RectangleShape,
-                    placeholder = { Text(text = "********") }
+                    placeholder = { Text(text = context.getString(R.string.your_password)) }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
                 Row(
@@ -110,10 +113,10 @@ fun LoginPage(navController: NavHostController) {
                             checked = rememberMe.value,
                             onCheckedChange = { checked -> rememberMe.value = checked }
                         )
-                        Text("Remember me")
+                        Text(context.getString(R.string.remember_me))
                     }
                     Text(
-                        text = "FORGOT PASSWORD?",
+                        text = context.getString(R.string.forgot_password),
                         color = Color.Black,
                         modifier = Modifier.clickable(onClick = { /* Handle forgot password */ })
                     )
@@ -128,7 +131,7 @@ fun LoginPage(navController: NavHostController) {
                         .background(Color(0xFFFC4484), shape = RoundedCornerShape(8.dp)),
 
                 ) {
-                    Text(text = "Log In", fontSize = 20.sp, color = Color.White)
+                    Text(text = context.getString(R.string.log_in), fontSize = 20.sp, color = Color.White)
                 }
                 Spacer(modifier = Modifier.padding(20.dp))
                 Row(
@@ -136,11 +139,11 @@ fun LoginPage(navController: NavHostController) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Don't have an account?",
+                        text = context.getString(R.string.dont_have_an_account),
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     Text(
-                        text = "Sign Up",
+                        text = context.getString(R.string.sign_up),
                         color = Color(0xFFFC4484),
                         modifier = Modifier.clickable(onClick = { navController.navigate("register") })
                     )

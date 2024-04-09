@@ -1,4 +1,5 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +19,6 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -166,6 +168,15 @@ fun TermsAndConditions() {
 }
 
 
+fun focusIndicatorModifier(isFocused:Boolean):Modifier{
+    return Modifier.border(
+        width = 1.dp,
+        color=if (isFocused) Color.Blue else Color.Black
+    )
+}
+
+
+
 @Composable
 fun RegistrationPage(navController: NavHostController) {
     val nameValue = remember { mutableStateOf("") }
@@ -174,6 +185,12 @@ fun RegistrationPage(navController: NavHostController) {
 
     val passwordVisibility = remember { mutableStateOf(false) }
     val termsAccepted = remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    var isUsernameFocused = remember { mutableStateOf(false) }
+    var isPasswordFocused = remember { mutableStateOf(false) }
+    var isEmailFocused = remember { mutableStateOf(false) }
+
+//    var isFocused = remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
         Column(
@@ -197,7 +214,7 @@ fun RegistrationPage(navController: NavHostController) {
 
             ) {
                 Text(
-                    text = "Create account",
+                    text = context.getString(R.string.create_account),
                     fontSize = 30.sp,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
@@ -206,29 +223,40 @@ fun RegistrationPage(navController: NavHostController) {
                 )
                 Spacer(modifier = Modifier.padding(20.dp))
                 Column(horizontalAlignment = Alignment.Start) {
-                    Text("Username", modifier = Modifier.padding(bottom = 8.dp))
+                    Text(context.getString(R.string.username), modifier = Modifier.padding(bottom = 8.dp))
                     OutlinedTextField(
                         value = nameValue.value,
                         onValueChange = { nameValue.value = it },
-                        placeholder = { Text(text = "Your Username") },
+                        placeholder = { Text(text = context.getString(R.string.your_username)) },
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        shape = RectangleShape,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = if (isUsernameFocused.value) Color.Gray else Color.White )
                     )
+
                     Text("Email", modifier = Modifier.padding(bottom = 8.dp))
                     OutlinedTextField(
                         value = emailValue.value,
                         onValueChange = { emailValue.value = it },
-                        placeholder = { Text(text = "Your Email") },
+                        placeholder = { Text(text = context.getString(R.string.your_email)) },
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        shape = RectangleShape,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = if (isEmailFocused.value) Color.Gray else Color.White )
                     )
                     Text("Password", modifier = Modifier.padding(bottom = 8.dp))
                     OutlinedTextField(
                         value = passwordValue.value,
                         onValueChange = { passwordValue.value = it },
-                        placeholder = { Text(text = "********") },
+                        placeholder = { Text(text = context.getString(R.string.your_password)) },
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
+                        shape = RectangleShape,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = if (isPasswordFocused.value) Color.Gray else Color.White ),
+
                         trailingIcon = {
                             IconButton(onClick = {
                                 passwordVisibility.value = !passwordVisibility.value
@@ -251,7 +279,7 @@ fun RegistrationPage(navController: NavHostController) {
                             colors = CheckboxDefaults.colors(checkedColor = Color.Black)
                         )
                         Text(
-                            text = "I agree to the Terms and Conditions",
+                            text = context.getString(R.string.terms_and_conditions),
                             modifier = Modifier.clickable(onClick = { /* Open terms and conditions */ })
                         )
                     }
@@ -265,7 +293,7 @@ fun RegistrationPage(navController: NavHostController) {
                             .background(Color(0xFFFC4484), shape = RoundedCornerShape(8.dp)),
                         enabled = termsAccepted.value
                     ) {
-                        Text(text = "Sign Up", fontSize = 20.sp, color = Color.White)
+                        Text(text = context.getString(R.string.sign_up), fontSize = 20.sp, color = Color.White)
                     }
                     Spacer(modifier = Modifier.padding(20.dp))
                     Row(
@@ -273,11 +301,11 @@ fun RegistrationPage(navController: NavHostController) {
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Already have an account?",
+                            text = context.getString(R.string.have_an_account),
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Text(
-                            text = "Log in",
+                            text = context.getString(R.string.log_in),
                             color = Color(0xFFFC4484),
                             modifier = Modifier.clickable(onClick = { navController.navigate("login") })
                         )
@@ -288,5 +316,9 @@ fun RegistrationPage(navController: NavHostController) {
         }
     }
 }
+
+
+
+
 
 
